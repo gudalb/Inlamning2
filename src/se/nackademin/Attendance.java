@@ -13,6 +13,7 @@ public class Attendance {
         this.personnummer = personnummer;
         this.name = name;
         this.date = LocalDateTime.now();
+        GymUtil.attendanceList.add(this);
     }
 
     @Override

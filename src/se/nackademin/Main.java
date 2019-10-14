@@ -14,10 +14,6 @@ public class Main {
         GymUtil.getCustomersFromFile();
         GymUtil.printCustomers();
         GymUtil.addAttendance();
-
+        GymUtil.printAttendance();
     }
 }
-
-// todo gör om inläsning från fil, använd scanner nextint etc med annan delimeter
-// todo ändra formatering för datum sparat i fil
-// todo sätt krav för personnummer, antal nr och som int

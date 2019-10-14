@@ -11,31 +11,21 @@ public class GymUtil {
 
 
     public static void addAttendance() {
-        boolean persOk = false;
-        boolean namnOk = false;
-        String name = "";
-        String personnummer = "";
+        String name;
+        String personnummer;
         Scanner sc = new Scanner(System.in);
 
-        while (!namnOk) {
+        do  {
             System.out.print("Ange namn: ");
             name = sc.nextLine();
+        } while (!validateName(name));
 
-            if (name.length() < 3)
-                System.out.println("Namn måste innehålla minst 3 bokstäver.");
-            else
-                namnOk = true;
-        }
-
-        while (!persOk) {
+        do {
             System.out.print("Ange personnummer: ");
             personnummer = sc.nextLine();
-             if (testPersonnummer(personnummer))
-                 persOk = true;
-        }
+        } while (!validatePersonnummer(personnummer));
 
         Attendance tempAttendance = new Attendance(personnummer, name);
-        attendanceList.add(tempAttendance);
 
         System.out.println("Attendance added for:\n" + tempAttendance);
 
@@ -62,7 +52,7 @@ public class GymUtil {
                     name = temp.substring(temp.indexOf(",") + 2);
                     date = LocalDate.parse(sc.nextLine());
 
-                    GymUtil.customerList.add(new Customer(personnummer,name,date));
+                    new Customer(personnummer,name,date);
 
                 } catch (StringIndexOutOfBoundsException e) {
                     System.out.println("end of file.");
@@ -73,7 +63,15 @@ public class GymUtil {
         }
     }
 
-    public static boolean testPersonnummer (String s) {
+    public static boolean validateName (String s) {
+        if (s.length() > 2 )
+            return true;
+        else
+            System.out.println("Namn måste innehålla minst 3 bokstäver.");
+            return false;
+    }
+
+    public static boolean validatePersonnummer (String s) {
         boolean test = false;
 
         try {

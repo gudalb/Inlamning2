@@ -9,10 +9,11 @@ public class Customer {
 
     Customer () {};
 
-    Customer (String personNummer, String name, LocalDate date) {
-        this.personnummer = personNummer;
+    Customer (String personnummer, String name, LocalDate date) {
+        this.personnummer = personnummer;
         this.name = name;
         this.date = date;
+        GymUtil.customerList.add(this);
     }
 
     public String getPersonnummer () {
