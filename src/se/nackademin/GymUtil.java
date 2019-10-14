@@ -1,7 +1,7 @@
 package se.nackademin;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import javax.swing.*;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -10,7 +10,7 @@ public class GymUtil {
     public static List<Attendance> attendanceList = new ArrayList<>();
 
 
-    public static void addAttendance () {
+    public static void addAttendance() {
         boolean persOk = false;
         boolean namnOk = false;
         String name = "";
@@ -29,40 +29,77 @@ public class GymUtil {
 
         while (!persOk) {
             System.out.print("Ange personnummer: ");
-
-            try {
-                personnummer = sc.nextLine();
-                if (personnummer.length() != 10 && Integer.parseInt(personnummer) > 0)
-                    throw new IncorrectPersonnummerException();
-                else
-                    persOk = true;
-
-            } catch(IncorrectPersonnummerException e){
-                System.out.println("Personnummer måste innehålla 10 siffror.");
-            } catch(NumberFormatException e){
-                System.out.println("Personnummer kan endast innehålla siffror.");
-            }
+            personnummer = sc.nextLine();
+             if (testPersonnummer(personnummer))
+                 persOk = true;
         }
 
         Attendance tempAttendance = new Attendance(personnummer, name);
         attendanceList.add(tempAttendance);
 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter("attendance.txt", true))) {
+        System.out.println("Attendance added for:\n" + tempAttendance);
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("attendance.txt", true))) {
             bw.write(tempAttendance.toString());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Error when printing attendance to file.");
-        } ;
+        }
     }
 
-    public static void printCustomers () {
-        for(Customer c:customerList) {
+    public static void getCustomersFromFile() {
+        try (Scanner sc = new Scanner(new File("customers.txt"))) {
+            String temp;
+            String personnummer;
+            String name;
+            LocalDate date;
+
+            while (sc.hasNextLine()) {
+
+                try {
+                    temp = sc.nextLine();
+                    personnummer = temp.substring(0, temp.indexOf(","));
+                    name = temp.substring(temp.indexOf(",") + 2);
+                    date = LocalDate.parse(sc.nextLine());
+
+                    GymUtil.customerList.add(new Customer(personnummer,name,date));
+
+                } catch (StringIndexOutOfBoundsException e) {
+                    System.out.println("end of file.");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean testPersonnummer (String s) {
+        boolean test = false;
+
+        try {
+            if (s.length() != 10 && Integer.parseInt(s) > 0)
+                throw new IncorrectPersonnummerException();
+            else
+                test = true;
+
+        } catch (IncorrectPersonnummerException e) {
+            System.out.println("Personnummer måste innehålla 10 siffror.");
+        } catch (NumberFormatException e) {
+            System.out.println("Personnummer kan endast innehålla siffror.");
+        }
+
+        return test;
+    }
+
+    public static void printCustomers() {
+        for (Customer c : customerList) {
             System.out.println(c);
             System.out.println("----");
         }
     }
-    public static void printAttendance () {
-        for(Attendance a:attendanceList) {
+
+    public static void printAttendance() {
+        for (Attendance a : attendanceList) {
             System.out.println(a);
             System.out.println("----");
         }
