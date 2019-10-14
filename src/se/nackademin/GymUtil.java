@@ -1,4 +1,7 @@
 package se.nackademin;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -8,28 +11,48 @@ public class GymUtil {
 
 
     public static void addAttendance () {
-        boolean klart = false;
-        Scanner sc = new Scanner(System.in);
+        boolean persOk = false;
+        boolean namnOk = false;
         String name = "";
-        String pNr = "";
+        String personnummer = "";
+        Scanner sc = new Scanner(System.in);
 
-        while (!klart) {
+        while (!namnOk) {
+            System.out.print("Ange namn: ");
+            name = sc.nextLine();
+
+            if (name.length() < 3)
+                System.out.println("Namn måste innehålla minst 3 bokstäver.");
+            else
+                namnOk = true;
+        }
+
+        while (!persOk) {
+            System.out.print("Ange personnummer: ");
+
             try {
-                System.out.print("Ange namn: ");
-                name = sc.nextLine();
-                System.out.print("Ange personnummer: ");
-                pNr = sc.nextLine();
-                if (name.length() > 1 && pNr.length() > 1)
-                    klart = true;
+                personnummer = sc.nextLine();
+                if (personnummer.length() != 10 && Integer.parseInt(personnummer) > 0)
+                    throw new IncorrectPersonnummerException();
+                else
+                    persOk = true;
 
-            } catch (Exception e) {
-                System.out.println("fel när attendance");
+            } catch(IncorrectPersonnummerException e){
+                System.out.println("Personnummer måste innehålla 10 siffror.");
+            } catch(NumberFormatException e){
+                System.out.println("Personnummer kan endast innehålla siffror.");
             }
         }
 
-        if (klart)
-            attendanceList.add(new Attendance(pNr, name, LocalDate.now()));
+        Attendance tempAttendance = new Attendance(personnummer, name);
+        attendanceList.add(tempAttendance);
 
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter("attendance.txt", true))) {
+            bw.write(tempAttendance.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error when printing attendance to file.");
+        } ;
     }
 
     public static void printCustomers () {
